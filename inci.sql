@@ -1,6 +1,6 @@
 -- incidencias.sql
 
-USE db_incidencias;
+USE supernatural_db;
 
 -- Usuarios (reportero / validador)
 CREATE TABLE usuario (

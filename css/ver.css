@@ -1,0 +1,946 @@
+/* Reset y configuración base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+    padding: 2rem 0;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.sidebar h2 {
+    color: #ecf0f1;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    padding: 0 1rem;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 1rem;
+}
+
+.sidebar a {
+    display: block;
+    color: #bdc3c7;
+    text-decoration: none;
+    padding: 1rem 2rem;
+    margin: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s;
+}
+
+.sidebar a:hover::before {
+    left: 100%;
+}
+
+.sidebar a:hover {
+    background: linear-gradient(45deg, #3498db, #2980b9);
+    color: #fff;
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+}
+
+.sidebar a:active {
+    transform: translateX(5px) scale(0.98);
+}
+
+/* Contenido principal */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.header h1 {
+    color: #2c3e50;
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    background: linear-gradient(45deg, #3498db, #9b59b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Caja de contenido */
+.box {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c, #f39c12);
+    background-size: 300% 100%;
+    animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.box p {
+    font-size: 1.1rem;
+    color: #34495e;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.8;
+}
+
+/* Footer */
+footer {
+    background: rgba(44, 62, 80, 0.9);
+    color: #ecf0f1;
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Efectos adicionales */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.header, .box, footer {
+    animation: fadeIn 0.8s ease-out;
+}
+
+.box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+/* Scrollbar personalizado */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: #3498db;
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: #2980b9;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 250px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .box {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 100%;
+    }
+    
+    .header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .sidebar h2 {
+        font-size: 1.2rem;
+    }
+    
+    .sidebar a {
+        padding: 0.8rem 1.5rem;
+        margin: 0.3rem 0.8rem;
+    }
+}
+
+/* Animaciones hover mejoradas */
+.sidebar a {
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar a::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    width: 6px;
+    height: 6px;
+    background: #3498db;
+    border-radius: 50%;
+    transform: translateY(-50%) scale(0);
+    transition: transform 0.3s ease;
+}
+
+.sidebar a:hover::after {
+    transform: translateY(-50%) scale(1);
+}
+
+/* Estados activos */
+.sidebar a.active {
+    background: linear-gradient(45deg, #3498db, #2980b9);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+}
+
+/* Mejoras de accesibilidad */
+.sidebar a:focus,
+.box:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+
+/* Efectos de carga */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+/* Micro-animaciones */
+.sidebar h2 {
+    animation: slideInLeft 0.6s ease-out;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ========================================
+   ESTILOS PARA PÁGINAS DE FORMULARIOS
+   ======================================== */
+
+/* Header para páginas de formulario */
+header {
+    background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+    color: white;
+    padding: 2rem 0;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><linearGradient id="a" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:0.1" /><stop offset="100%" style="stop-color:rgb(255,255,255);stop-opacity:0" /></linearGradient></defs><polygon fill="url(%23a)" points="0,20 100,0 100,20"/></svg>') repeat-x;
+    opacity: 0.3;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
+}
+
+header nav {
+    margin-top: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+header nav a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    margin: 0 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    display: inline-block;
+    font-weight: 500;
+}
+
+header nav a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+/* Main content para formularios */
+main {
+    max-width: 800px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilos del formulario */
+#formIncidencia {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+#formIncidencia::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c, #f39c12, #2ecc71);
+    background-size: 300% 100%;
+    animation: rainbowSlide 4s ease infinite;
+}
+
+@keyframes rainbowSlide {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* Labels del formulario */
+#formIncidencia label {
+    display: block;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    position: relative;
+}
+
+#formIncidencia label:first-of-type {
+    margin-top: 0;
+}
+
+#formIncidencia label::before {
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 20px;
+    background: linear-gradient(45deg, #3498db, #2980b9);
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#formIncidencia label:hover::before {
+    opacity: 1;
+}
+
+/* Inputs del formulario */
+#formIncidencia input,
+#formIncidencia textarea {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    border: 2px solid #e1e8ed;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+    outline: none;
+    color: #2c3e50;
+}
+
+#formIncidencia input:focus,
+#formIncidencia textarea:focus {
+    border-color: #3498db;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    transform: translateY(-1px);
+}
+
+#formIncidencia textarea {
+    min-height: 120px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* Placeholder styling */
+#formIncidencia input::placeholder,
+#formIncidencia textarea::placeholder {
+    color: #95a5a6;
+    font-style: italic;
+}
+
+/* Botón de envío */
+#formIncidencia button {
+    background: linear-gradient(45deg, #3498db, #2980b9);
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 2rem;
+    width: 100%;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+#formIncidencia button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+#formIncidencia button:hover::before {
+    left: 100%;
+}
+
+#formIncidencia button:hover {
+    background: linear-gradient(45deg, #2980b9, #3498db);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+}
+
+#formIncidencia button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+}
+
+/* Estados de validación */
+#formIncidencia input:invalid,
+#formIncidencia textarea:invalid {
+    border-color: #e74c3c;
+}
+
+#formIncidencia input:valid,
+#formIncidencia textarea:valid {
+    border-color: #2ecc71;
+}
+
+/* Efectos de hover en inputs */
+#formIncidencia input:hover,
+#formIncidencia textarea:hover {
+    border-color: #3498db;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.1);
+}
+
+/* Responsive para formularios */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    header nav a {
+        display: block;
+        margin: 0.5rem auto;
+        max-width: 200px;
+    }
+    
+    main {
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+    
+    #formIncidencia {
+        padding: 2rem 1.5rem;
+        border-radius: 15px;
+    }
+    
+    #formIncidencia label::before {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    header {
+        padding: 1.5rem 0;
+    }
+    
+    header h1 {
+        font-size: 1.8rem;
+    }
+    
+    #formIncidencia {
+        padding: 1.5rem;
+    }
+    
+    #formIncidencia input,
+    #formIncidencia textarea {
+        padding: 0.8rem 1rem;
+    }
+    
+    #formIncidencia button {
+        padding: 0.8rem 1.5rem;
+    }
+}
+
+/* Animación de éxito */
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.success-animation {
+    animation: successPulse 0.3s ease-in-out;
+}
+
+/* Loading state para el botón */
+.loading-btn {
+    background: #95a5a6 !important;
+    cursor: not-allowed;
+    position: relative;
+}
+
+.loading-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px;
+    border: 2px solid transparent;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ========================================
+   ESTILOS PARA TABLAS Y LISTADOS
+   ======================================== */
+
+/* Contenedor para páginas de tabla */
+main {
+    max-width: 1400px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+/* Tabla de incidencias */
+#tablaIncidencias {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* Borde superior animado para la tabla */
+#tablaIncidencias::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c, #f39c12, #2ecc71);
+    background-size: 300% 100%;
+    animation: gradientFlow 4s ease infinite;
+    z-index: 1;
+}
+
+/* Header de la tabla */
+#tablaIncidencias thead {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    position: relative;
+}
+
+#tablaIncidencias thead::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+    pointer-events: none;
+}
+
+#tablaIncidencias th {
+    padding: 1.5rem 2rem;
+    color: #ecf0f1;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-align: left;
+    position: relative;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #3498db;
+}
+
+#tablaIncidencias th:not(:last-child) {
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Efecto hover en headers */
+#tablaIncidencias th:hover {
+    background: rgba(52, 152, 219, 0.2);
+    cursor: pointer;
+}
+
+/* Filas del cuerpo de la tabla */
+#tablaIncidencias tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(52, 152, 219, 0.1);
+}
+
+#tablaIncidencias tbody tr:nth-child(even) {
+    background: rgba(52, 152, 219, 0.03);
+}
+
+#tablaIncidencias tbody tr:hover {
+    background: linear-gradient(90deg, rgba(52, 152, 219, 0.08), rgba(155, 89, 182, 0.08));
+    transform: scale(1.01);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.15);
+    z-index: 10;
+    position: relative;
+}
+
+/* Celdas del cuerpo */
+#tablaIncidencias td {
+    padding: 1.5rem 2rem;
+    color: #2c3e50;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-right: 1px solid rgba(52, 152, 219, 0.05);
+    vertical-align: top;
+}
+
+#tablaIncidencias td:last-child {
+    border-right: none;
+}
+
+/* Estilo especial para la columna de descripción */
+#tablaIncidencias td:nth-child(2) {
+    max-width: 300px;
+    word-wrap: break-word;
+    font-style: italic;
+    color: #34495e;
+}
+
+/* Estilo para la columna de fecha */
+#tablaIncidencias td:nth-child(3) {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #3498db;
+    white-space: nowrap;
+}
+
+/* Estilo para la columna de usuario */
+#tablaIncidencias td:nth-child(4) {
+    font-weight: 600;
+    color: #27ae60;
+}
+
+/* Animación para filas nuevas */
+@keyframes slideInRow {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+#tablaIncidencias tbody tr {
+    animation: slideInRow 0.5s ease-out;
+}
+
+/* Estado vacío de la tabla */
+.tabla-vacia {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #7f8c8d;
+    font-style: italic;
+    font-size: 1.2rem;
+}
+
+.tabla-vacia::before {
+    content: "📋";
+    display: block;
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+}
+
+/* Responsive para tablas */
+@media (max-width: 1200px) {
+    main {
+        padding: 0 1rem;
+    }
+    
+    #tablaIncidencias {
+        font-size: 0.9rem;
+    }
+    
+    #tablaIncidencias th,
+    #tablaIncidencias td {
+        padding: 1rem 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    #tablaIncidencias {
+        border-radius: 15px;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    #tablaIncidencias thead,
+    #tablaIncidencias tbody,
+    #tablaIncidencias th,
+    #tablaIncidencias td,
+    #tablaIncidencias tr {
+        display: block;
+    }
+    
+    #tablaIncidencias thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    
+    #tablaIncidencias tr {
+        background: rgba(255, 255, 255, 0.95);
+        margin-bottom: 1rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+        border: 1px solid rgba(52, 152, 219, 0.1);
+    }
+    
+    #tablaIncidencias td {
+        border: none;
+        position: relative;
+        padding: 0.5rem 0 0.5rem 35%;
+        white-space: normal;
+        text-align: left;
+    }
+    
+    #tablaIncidencias td:before {
+        content: attr(data-label) ": ";
+        position: absolute;
+        left: 0;
+        width: 30%;
+        padding-right: 1rem;
+        white-space: nowrap;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+    
+    /* Labels para responsive */
+    #tablaIncidencias td:nth-child(1):before { content: "Título: "; }
+    #tablaIncidencias td:nth-child(2):before { content: "Descripción: "; }
+    #tablaIncidencias td:nth-child(3):before { content: "Fecha: "; }
+    #tablaIncidencias td:nth-child(4):before { content: "Usuario: "; }
+}
+
+@media (max-width: 480px) {
+    main {
+        margin: 2rem auto;
+        padding: 0 0.5rem;
+    }
+    
+    #tablaIncidencias {
+        border-radius: 10px;
+    }
+    
+    #tablaIncidencias tr {
+        padding: 0.8rem;
+    }
+    
+    #tablaIncidencias td {
+        padding: 0.4rem 0 0.4rem 35%;
+        font-size: 0.9rem;
+    }
+    
+    #tablaIncidencias td:before {
+        font-size: 0.8rem;
+    }
+}
+
+/* Efectos adicionales para la tabla */
+#tablaIncidencias:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Indicador de carga para la tabla */
+.tabla-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+.tabla-loading::after {
+    content: '';
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e1e8ed;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Scrollbar personalizada para la tabla */
+#tablaIncidencias::-webkit-scrollbar {
+    height: 8px;
+}
+
+#tablaIncidencias::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+#tablaIncidencias::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #3498db, #2980b9);
+    border-radius: 4px;
+}
+
+#tablaIncidencias::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, #2980b9, #3498db);
+}
