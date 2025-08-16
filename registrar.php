@@ -1,5 +1,5 @@
 <?php
-// registro.php
+require_once "config/db.php";
 $mensaje = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -8,70 +8,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = trim($_POST['password'] ?? '');
 
     if ($username && $email && $password) {
-        // Conectar a la base de datos
-        $conexion = new mysqli("localhost", "root", "rubicon30$", "supernatural_db");
-
-        if ($conexion->connect_error) {
-            die("Error de conexión: " . $conexion->connect_error);
-        }
-
-        // Verificar si ya existe el usuario o el email
-        $stmt = $conexion->prepare("SELECT id_usuario FROM usuario WHERE nombre = ? OR email = ?");
-        $stmt->bind_param("ss", $username, $email);
-        $stmt->execute();
-        $stmt->store_result();
-
-        if ($stmt->num_rows > 0) {
-            $mensaje = "El usuario o el email ya están registrados.";
+        // Validar fuerza de contraseña
+        if (strlen($password) < 6) {
+            $mensaje = "La contraseña debe tener al menos 6 caracteres.";
         } else {
-            // Encriptar contraseña
-            $hash = password_hash($password, PASSWORD_DEFAULT);
+            // Verificar usuario/email
+            $stmt = $pdo->prepare("SELECT id_usuario FROM usuario WHERE nombre = ? OR email = ?");
+            $stmt->execute([$username, $email]);
 
-            // Insertar en la base de datos
-            $stmtInsert = $conexion->prepare("INSERT INTO usuario (nombre, email, password) VALUES (?, ?, ?)");
-            $stmtInsert->bind_param("sss", $username, $email, $hash);
-
-            if ($stmtInsert->execute()) {
-                $mensaje = "Registro exitoso. Ahora puedes iniciar sesión.";
-                header("Refresh: 2; url=login.php");
+            if ($stmt->fetch()) {
+                $mensaje = "El usuario o el email ya están registrados.";
             } else {
-                $mensaje = "Error al registrar usuario.";
-            }
-            $stmtInsert->close();
-        }
+                $hash = password_hash($password, PASSWORD_DEFAULT);
+                $stmtInsert = $pdo->prepare("INSERT INTO usuario (nombre, email, password) VALUES (?, ?, ?)");
 
-        $stmt->close();
-        $conexion->close();
+                if ($stmtInsert->execute([$username, $email, $hash])) {
+                    $mensaje = "Registro exitoso. Redirigiendo...";
+                    header("Refresh: 2; url=login.php");
+                } else {
+                    $mensaje = "Error al registrar usuario.";
+                }
+            }
+        }
     } else {
         $mensaje = "Completa todos los campos.";
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Registrarse</title>
-    <link rel="stylesheet" href="css/registrar.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+    <link rel="stylesheet" href="css/registrar.css">
 </head>
 <body>
     <h1>Registro</h1>
 
-    <?php if (!empty($mensaje)): ?>
-        <p style="color:blue;"><?php echo $mensaje; ?></p>
+    <?php if ($mensaje): ?>
+        <p style="color:blue;"><?php echo htmlspecialchars($mensaje); ?></p>
     <?php endif; ?>
 
     <form method="POST" action="">
-        <label for="username">Usuario:</label>
-        <input type="text" id="username" name="username" required /><br /><br />
+        <label>Usuario:</label>
+        <input type="text" name="username" required>
 
-        <label for="email">Correo:</label>
-        <input type="email" id="email" name="email" required /><br /><br />
+        <label>Correo:</label>
+        <input type="email" name="email" required>
 
-        <label for="password">Contraseña:</label>
-        <input type="password" id="password" name="password" required /><br /><br />
+        <label>Contraseña:</label>
+        <input type="password" name="password" required>
 
         <button type="submit">Registrar</button>
     </form>

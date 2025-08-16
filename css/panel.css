@@ -592,3 +592,23 @@ footer::before {
         margin-bottom: 1rem;
     }
 }
+.btn-volver {
+    display: inline-block;
+    margin-top: 10px;
+    background-color: #2563eb;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-volver i {
+    margin-right: 6px;
+}
+
+.btn-volver:hover {
+    background-color: #1d4ed8;
+}
+

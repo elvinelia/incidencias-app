@@ -1,180 +1,108 @@
 <?php
-session_start();
-if (!isset($_SESSION['usuario'])) {
-    header("Location: login.php");
-    exit();
-}
-
 require_once "config/db.php";
+if (session_status() === PHP_SESSION_NONE) session_start();
 
-// Fecha de filtro
-$fecha_inicio = $_GET['fecha_inicio'] ?? null;
-$fecha_fin = $_GET['fecha_fin'] ?? null;
+$desde = $_GET['desde'] ?? date('Y-m-d', strtotime('-30 days'));
+$hasta = $_GET['hasta'] ?? date('Y-m-d');
 
-// Construir consulta dinámica
-$where = [];
-$params = [];
+$params=[":d"=>$desde, ":h"=>$hasta];
 
-if ($fecha_inicio) {
-    $where[] = "fecha_ocurrida >= :fecha_inicio";
-    $params[':fecha_inicio'] = $fecha_inicio . " 00:00:00";
-}
-if ($fecha_fin) {
-    $where[] = "fecha_ocurrida <= :fecha_fin";
-    $params[':fecha_fin'] = $fecha_fin . " 23:59:59";
-}
+$totales = $pdo->prepare("SELECT 
+  COUNT(*) total,
+  SUM(muertos) muertes,
+  SUM(heridos) heridos,
+  SUM(perdida_rd) perdidas
+  FROM incidencia WHERE DATE(fecha_ocurrida) BETWEEN :d AND :h");
+$totales->execute($params);
+$sum = $totales->fetch();
 
-$sql = "SELECT tipo, COUNT(*) AS total, SUM(muertos) AS muertos, SUM(heridos) AS heridos, SUM(perdida_rd) AS perdida
-        FROM incidencia";
-if ($where) {
-    $sql .= " WHERE " . implode(" AND ", $where);
-}
-$sql .= " GROUP BY tipo";
+$por_tipo = $pdo->prepare("SELECT t.nombre, COUNT(*) c
+ FROM incidencia i
+ JOIN incidencia_tipo it ON it.incidencia_id=i.id_incidencia
+ JOIN tipo_incidencia t ON t.id_tipo=it.id_tipo
+ WHERE DATE(i.fecha_ocurrida) BETWEEN :d AND :h
+ GROUP BY t.nombre ORDER BY c DESC LIMIT 12");
+$por_tipo->execute($params);
+$dat_tipo=$por_tipo->fetchAll();
 
-$stmt = $pdo->prepare($sql);
-$stmt->execute($params);
-$estadisticas = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-$tipos = [];
-$totales = [];
-$muertos = [];
-$heridos = [];
-$perdidas = [];
-
-foreach ($estadisticas as $row) {
-    $tipos[] = $row['tipo'];
-    $totales[] = (int)$row['total'];
-    $muertos[] = (int)$row['muertos'];
-    $heridos[] = (int)$row['heridos'];
-    $perdidas[] = (float)$row['perdida'];
-}
+$por_fecha = $pdo->prepare("SELECT DATE(fecha_ocurrida) f, COUNT(*) c,
+   SUM(muertos) m, SUM(heridos) h, SUM(perdida_rd) p
+  FROM incidencia
+  WHERE DATE(fecha_ocurrida) BETWEEN :d AND :h
+  GROUP BY DATE(fecha_ocurrida) ORDER BY f ASC");
+$por_fecha->execute($params);
+$dat_fecha=$por_fecha->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Reporte de Incidencias</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <title>Reportes</title>
+  <link rel="stylesheet" href="css/estilos.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 </head>
 <body>
-<header class="bg-primary text-white p-3 d-flex justify-content-between align-items-center">
-    <h1 class="h4 m-0">Reportes de Incidencias</h1>
-    <div>
-        <span class="me-2">Hola, <strong><?= htmlspecialchars($_SESSION['usuario']) ?></strong></span>
-        <a class="btn btn-light" href="logout.php">Cerrar sesión</a>
-    </div>
+<header class="topbar">
+  <h1>Reportes y Estadísticas</h1>
+  <nav>
+    <a href="ver_incidencia.php">Incidencias</a>
+    <a href="export/export_csv.php?reporte=1&<?= http_build_query($_GET) ?>">Exportar CSV</a>
+  </nav>
 </header>
 
-<div class="container my-4">
+<main class="container">
+  <form class="card filters" method="GET">
+    <label>Desde <input type="date" name="desde" value="<?= htmlspecialchars($desde) ?>"></label>
+    <label>Hasta <input type="date" name="hasta" value="<?= htmlspecialchars($hasta) ?>"></label>
+    <button type="submit">Aplicar</button>
+  </form>
 
-    <!-- Filtros -->
-    <form method="GET" class="row g-3 mb-4">
-        <div class="col-md-4">
-            <label>Fecha Inicio:</label>
-            <input type="date" name="fecha_inicio" class="form-control" value="<?= htmlspecialchars($fecha_inicio) ?>">
-        </div>
-        <div class="col-md-4">
-            <label>Fecha Fin:</label>
-            <input type="date" name="fecha_fin" class="form-control" value="<?= htmlspecialchars($fecha_fin) ?>">
-        </div>
-        <div class="col-md-4 align-self-end">
-            <button class="btn btn-primary w-100">Filtrar</button>
-        </div>
-    </form>
+  <section class="cards-4">
+    <div class="card kpi"><h3>Total Incidencias</h3><p><?= (int)($sum['total']??0) ?></p></div>
+    <div class="card kpi"><h3>Muertes</h3><p><?= (int)($sum['muertes']??0) ?></p></div>
+    <div class="card kpi"><h3>Heridos</h3><p><?= (int)($sum['heridos']??0) ?></p></div>
+    <div class="card kpi"><h3>Pérdidas RD$</h3><p><?= number_format($sum['perdidas']??0,2) ?></p></div>
+  </section>
 
-    <!-- Exportar -->
-    <div class="mb-4">
-        <button class="btn btn-success me-2">Exportar a Excel</button>
-        <button class="btn btn-danger">Exportar a PDF</button>
+  <section class="grid-2">
+    <div class="card">
+      <h3>Incidencias por Tipo</h3>
+      <canvas id="chartTipos"></canvas>
     </div>
-
-    <!-- Gráficos -->
-    <div class="row">
-        <div class="col-md-6">
-            <canvas id="graficoTotales"></canvas>
-        </div>
-        <div class="col-md-6">
-            <canvas id="graficoMuertos"></canvas>
-        </div>
+    <div class="card">
+      <h3>Serie temporal</h3>
+      <canvas id="chartSerie"></canvas>
     </div>
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <canvas id="graficoHeridos"></canvas>
-        </div>
-        <div class="col-md-6">
-            <canvas id="graficoPerdidas"></canvas>
-        </div>
-    </div>
-
-</div>
+  </section>
+</main>
 
 <script>
-const tipos = <?= json_encode($tipos) ?>;
-const totales = <?= json_encode($totales) ?>;
-const muertos = <?= json_encode($muertos) ?>;
-const heridos = <?= json_encode($heridos) ?>;
-const perdidas = <?= json_encode($perdidas) ?>;
+const tipos = <?= json_encode(array_column($dat_tipo,'nombre')) ?>;
+const tiposCount = <?= json_encode(array_map('intval', array_column($dat_tipo,'c'))) ?>;
 
-const colores = ['#007bff','#dc3545','#ffc107','#28a745','#6f42c1','#fd7e14'];
-
-// Gráfico de Totales
-new Chart(document.getElementById('graficoTotales'), {
-    type: 'bar',
-    data: {
-        labels: tipos,
-        datasets: [{
-            label: 'Número de Incidencias',
-            data: totales,
-            backgroundColor: colores
-        }]
-    },
-    options: { responsive:true, plugins:{ legend:{ display:false } } }
+new Chart(document.getElementById('chartTipos'), {
+  type: 'bar',
+  data: { labels: tipos, datasets: [{ label: 'Incidencias', data: tiposCount }] },
+  options: { responsive: true }
 });
 
-// Gráfico de Muertos
-new Chart(document.getElementById('graficoMuertos'), {
-    type: 'bar',
-    data: {
-        labels: tipos,
-        datasets: [{
-            label: 'Muertos',
-            data: muertos,
-            backgroundColor: colores
-        }]
-    },
-    options: { responsive:true, plugins:{ legend:{ display:false } } }
-});
+const fechas = <?= json_encode(array_column($dat_fecha,'f')) ?>;
+const cnt = <?= json_encode(array_map('intval', array_column($dat_fecha,'c'))) ?>;
+const muer = <?= json_encode(array_map('intval', array_column($dat_fecha,'m'))) ?>;
+const heri = <?= json_encode(array_map('intval', array_column($dat_fecha,'h'))) ?>;
 
-// Gráfico de Heridos
-new Chart(document.getElementById('graficoHeridos'), {
-    type: 'bar',
-    data: {
-        labels: tipos,
-        datasets: [{
-            label: 'Heridos',
-            data: heridos,
-            backgroundColor: colores
-        }]
-    },
-    options: { responsive:true, plugins:{ legend:{ display:false } } }
-});
-
-// Gráfico de Pérdidas RD$
-new Chart(document.getElementById('graficoPerdidas'), {
-    type: 'bar',
-    data: {
-        labels: tipos,
-        datasets: [{
-            label: 'Pérdidas (RD$)',
-            data: perdidas,
-            backgroundColor: colores
-        }]
-    },
-    options: { responsive:true, plugins:{ legend:{ display:false } } }
+new Chart(document.getElementById('chartSerie'), {
+  type: 'line',
+  data: {
+    labels: fechas,
+    datasets: [
+      { label: 'Incidencias', data: cnt },
+      { label: 'Muertes', data: muer },
+      { label: 'Heridos', data: heri },
+    ]
+  },
+  options: { responsive: true }
 });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

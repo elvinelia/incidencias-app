@@ -1,5 +1,4 @@
-/* Variables CSS */
-        :root {
+:root {
             --primary-color: #2563eb;
             --secondary-color: #1e40af;
             --danger-color: #dc2626;
@@ -216,12 +215,24 @@
         }
 
         /* Colores específicos para estadísticas */
+        .stat-card.deaths::before {
+            background: linear-gradient(90deg, var(--danger-color), #ef4444);
+        }
+
         .stat-card.deaths .stat-icon {
             color: var(--danger-color);
         }
 
+        .stat-card.injured::before {
+            background: linear-gradient(90deg, var(--warning-color), #fbbf24);
+        }
+
         .stat-card.injured .stat-icon {
             color: var(--warning-color);
+        }
+
+        .stat-card.losses::before {
+            background: linear-gradient(90deg, var(--success-color), #10b981);
         }
 
         .stat-card.losses .stat-icon {
@@ -270,6 +281,8 @@
             font-size: 0.9rem;
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(5px);
+            padding: 0.6rem 0.8rem;
+            width: 100%;
         }
 
         .form-select:focus, .form-control:focus {
@@ -328,6 +341,45 @@
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             border: 1px solid #e5e7eb;
+        }
+
+        /* Layout utilities */
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -15px;
+        }
+
+        .col-md-3 {
+            flex: 0 0 25%;
+            max-width: 25%;
+            padding: 0 15px;
+        }
+
+        .col-md-9 {
+            flex: 0 0 75%;
+            max-width: 75%;
+            padding: 0 15px;
+        }
+
+        .d-flex {
+            display: flex;
+        }
+
+        .justify-content-between {
+            justify-content: space-between;
+        }
+
+        .align-items-center {
+            align-items: center;
+        }
+
+        .w-100 {
+            width: 100%;
+        }
+
+        .me-2 {
+            margin-right: 0.5rem;
         }
 
         /* Custom popup styles */
@@ -400,6 +452,7 @@
             .user-section {
                 gap: 0.5rem;
                 justify-content: center;
+                flex-wrap: wrap;
             }
             
             #mapa {
@@ -411,10 +464,52 @@
                 position: relative;
                 top: auto;
             }
+
+            .row {
+                flex-direction: column;
+            }
+
+            .col-md-3, .col-md-9 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
         }
 
         @media (max-width: 576px) {
             .stats-container {
                 grid-template-columns: 1fr;
             }
+        }
+
+        /* Marker cluster styles */
+        .marker-cluster-small {
+            background: rgba(37, 99, 235, 0.8) !important;
+        }
+        .marker-cluster-small div {
+            background: rgba(37, 99, 235, 0.9) !important;
+        }
+        .marker-cluster-medium {
+            background: rgba(245, 158, 11, 0.8) !important;
+        }
+        .marker-cluster-medium div {
+            background: rgba(245, 158, 11, 0.9) !important;
+        }
+        .marker-cluster-large {
+            background: rgba(220, 38, 38, 0.8) !important;
+        }
+        .marker-cluster-large div {
+            background: rgba(220, 38, 38, 0.9) !important;
+        }
+        .leaflet-control-zoom a {
+            border-radius: 8px !important;
+            border: none !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+        }
+        .leaflet-control-zoom a:hover {
+            background: #2563eb !important;
+            color: white !important;
+        }
+        .custom-marker:hover {
+            transform: scale(1.1);
+            transition: transform 0.2s ease;
         }

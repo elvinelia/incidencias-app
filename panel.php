@@ -1,3 +1,16 @@
+<?php
+session_start();
+
+// Verificar que el usuario esté logueado
+if (!isset($_SESSION['usuario'])) {
+    header("Location: login.php");
+    exit();
+}
+
+// Obtener datos del usuario
+$usuarioNombre = $_SESSION['usuario']['nombre'] ?? 'Usuario';
+$usuarioRol = $_SESSION['usuario']['rol'] ?? '';
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -5,7 +18,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Control</title>
     
-    <link rel="stylesheet" href="/css/panel.css".></link>
+    <link rel="stylesheet" href="/css/panel.css">
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -14,8 +27,6 @@
     
     <!-- Font Awesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-   
 </head>
 <body>
     <!-- Loading Overlay -->
@@ -44,6 +55,24 @@
                 <i class="fas fa-chart-bar"></i>
                 <span>Generar Reporte</span>
             </a>
+
+            <?php if($usuarioRol === 'validador'): ?>
+            <!-- Administrar catálogos solo para validadores -->
+            <h3 class="mt-4"><i class="fas fa-database"></i> Catálogos</h3>
+            <a href="provincias.php">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Provincias</span>
+            </a>
+            <a href="municipios.php">
+                <i class="fas fa-city"></i>
+                <span>Municipios</span>
+            </a>
+            <a href="barrios.php">
+                <i class="fas fa-home"></i>
+                <span>Barrios</span>
+            </a>
+            <?php endif; ?>
+
             <a href="#" onclick="showUserProfile()">
                 <i class="fas fa-user-circle"></i>
                 <span>Mi Perfil</span>
@@ -60,8 +89,11 @@
             <div class="header">
                 <h1>
                     <i class="fas fa-tachometer-alt"></i>
-                    Bienvenido al Panel de Control, Usuario
+                    Bienvenido al Panel de Control, <?= htmlspecialchars($usuarioNombre) ?>
                 </h1>
+                <a href="index.php" class="btn-volver">
+                    <i class="fas fa-arrow-left"></i> Volver al Inicio
+                </a> 
             </div>
 
             <!-- Welcome Box -->
@@ -110,7 +142,6 @@
 
         // Inicialización cuando se carga la página
         document.addEventListener('DOMContentLoaded', function() {
-            // Simular carga inicial
             setTimeout(() => {
                 document.getElementById('loadingOverlay').classList.add('hide');
                 initializeMap();
@@ -120,26 +151,17 @@
 
         // Inicializar mapa
         function initializeMap() {
-            // Remover clase de loading del mapa
             document.getElementById('map').classList.remove('map-loading');
-
-            // Inicializar mapa centrado en República Dominicana
             map = L.map('map').setView([18.7357, -70.1627], 8);
-
-            // Capa base con estilo moderno
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
                 maxZoom: 19
             }).addTo(map);
-
-            // Agregar marcadores con iconos personalizados
             addIncidenciaMarkers();
-
-            // Agregar controles personalizados
             addMapControls();
         }
 
-        // Agregar marcadores de incidencias
+        // Agregar marcadores
         function addIncidenciaMarkers() {
             const iconColors = {
                 'Accidente': '#dc2626',
@@ -147,20 +169,15 @@
                 'Incendio': '#059669',
                 'default': '#2563eb'
             };
-
             sampleIncidencias.forEach(function(inc) {
                 if (inc.latitud && inc.longitud) {
                     const color = iconColors[inc.tipo] || iconColors.default;
-                    
-                    // Crear icono personalizado
                     const customIcon = L.divIcon({
                         className: 'custom-marker',
                         html: `<div style="background-color: ${color}; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
                         iconSize: [20, 20],
                         iconAnchor: [10, 10]
                     });
-
-                    // Contenido del popup
                     let popupContent = `
                         <div style="min-width: 200px;">
                             <h4 style="color: ${color}; margin: 0 0 8px 0;">
@@ -174,7 +191,6 @@
                             </small>
                         </div>
                     `;
-
                     L.marker([parseFloat(inc.latitud), parseFloat(inc.longitud)], {icon: customIcon})
                         .addTo(map)
                         .bindPopup(popupContent);
@@ -182,20 +198,13 @@
             });
         }
 
-        // Agregar controles personalizados al mapa
+        // Controles del mapa
         function addMapControls() {
-            // Control de zoom personalizado
             map.zoomControl.setPosition('topright');
-            
-            // Agregar escala
-            L.control.scale({
-                position: 'bottomleft',
-                metric: true,
-                imperial: false
-            }).addTo(map);
+            L.control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
         }
 
-        // Inicializar sidebar
+        // Sidebar
         function initializeSidebar() {
             const sidebarToggle = document.getElementById('sidebarToggle');
             const sidebar = document.getElementById('sidebar');
@@ -203,26 +212,21 @@
 
             sidebarToggle.addEventListener('click', function() {
                 if (window.innerWidth <= 768) {
-                    // Mobile: mostrar/ocultar sidebar
                     sidebar.classList.toggle('show');
                 } else {
-                    // Desktop: colapsar/expandir sidebar
                     sidebar.classList.toggle('collapsed');
                     mainContent.classList.toggle('expanded');
                 }
             });
 
-            // Cerrar sidebar en mobile al hacer clic fuera
             document.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768 && 
-                    !sidebar.contains(e.target) && 
-                    !sidebarToggle.contains(e.target)) {
+                if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
                     sidebar.classList.remove('show');
                 }
             });
         }
 
-        // Funciones adicionales
+        // Funciones extra
         function confirmLogout() {
             return confirm('¿Estás seguro de que deseas cerrar sesión?');
         }
@@ -231,21 +235,12 @@
             alert('Función de perfil de usuario en desarrollo');
         }
 
-        // Responsive map handling
         window.addEventListener('resize', function() {
-            if (map) {
-                setTimeout(function() {
-                    map.invalidateSize();
-                }, 300);
-            }
+            if (map) setTimeout(() => map.invalidateSize(), 300);
         });
 
-        // Animaciones de carga progresiva para elementos
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
+        // Animaciones
+        const observerOptions = {threshold: 0.1, rootMargin: '0px 0px -50px 0px'};
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -255,7 +250,6 @@
             });
         }, observerOptions);
 
-        // Observar elementos para animaciones
         document.addEventListener('DOMContentLoaded', function() {
             const elementsToAnimate = document.querySelectorAll('.header, .welcome-box, .map-section');
             elementsToAnimate.forEach(el => {
