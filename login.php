@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "config/db.php"; // Usar conexión centralizada
+require_once "config/db.php"; // Conexión centralizada
 
 if (isset($_SESSION['usuario'])) {
     header("Location: panel.php");
@@ -14,19 +14,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = trim($_POST['password'] ?? '');
 
     if ($email && $password) {
-        $stmt = $pdo->prepare("SELECT id_usuario, nombre, password, rol 
-                               FROM usuario WHERE email = ?");
+        $stmt = $pdo->prepare("SELECT id_usuario, nombre, password FROM usuario WHERE email = ?");
         $stmt->execute([$email]);
-        $usuario = $stmt->fetch();
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($usuario && password_verify($password, $usuario['password'])) {
-            $_SESSION['id_usuario'] = $usuario['id_usuario'];
-            $_SESSION['usuario'] = $usuario['nombre'];
-            $_SESSION['rol'] = $usuario['rol'];
+            // Guardamos usuario como array completo en sesión
+            $_SESSION['usuario'] = [
+                'id_usuario' => $usuario['id_usuario'],
+                'nombre' => $usuario['nombre']
+            ];
 
-            // Redirigir según rol
-            $destino = ($usuario['rol'] === 'validador') ? "super/dashboard.php" : "panel.php";
-            header("Location: $destino");
+            // Redirigir a panel general
+            header("Location: panel.php");
             exit();
         } else {
             $mensaje = "Usuario o contraseña incorrectos.";

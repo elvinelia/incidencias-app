@@ -56,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
   <meta charset="UTF-8">
   <title>Registrar Incidencia</title>
-  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="stylesheet" href="css/incide.css">
 </head>
 <body>
 <header class="topbar">

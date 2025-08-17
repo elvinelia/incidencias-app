@@ -38,7 +38,7 @@ $dat_fecha=$por_fecha->fetchAll();
 <head>
   <meta charset="UTF-8">
   <title>Reportes</title>
-  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="stylesheet" href="css/reporte.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 </head>
 <body>

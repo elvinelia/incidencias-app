@@ -38,7 +38,7 @@ $provincias = $pdo->query("SELECT * FROM provincia ORDER BY nombre")->fetchAll()
 <head>
   <meta charset="UTF-8">
   <title>Incidencias</title>
-  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="stylesheet" href="css/ver.css">
 </head>
 <body>
 <header class="topbar">
@@ -46,7 +46,7 @@ $provincias = $pdo->query("SELECT * FROM provincia ORDER BY nombre")->fetchAll()
   <nav>
     <a href="registrar-incide.php">Registrar</a>
     <a href="reporte.php">Reportes</a>
-    <?php if(isset($_SESSION['usuario']) && $_SESSION['usuario']['rol']==='validador'): ?>
+     <?php if(isset($_SESSION['rol']) && $_SESSION['rol'] === 'validador'): ?>
       <a href="super.php">Validador</a>
     <?php endif; ?>
     <?php if(!isset($_SESSION['usuario'])): ?>
@@ -102,7 +102,7 @@ $provincias = $pdo->query("SELECT * FROM provincia ORDER BY nombre")->fetchAll()
           <?php if(isset($_SESSION['usuario'])): ?>
             <button class="link sugerir-btn" data-id="<?= $r['id_incidencia'] ?>">Sugerir</button>
           <?php endif; ?>
-          <?php if(isset($_SESSION['usuario']) && $_SESSION['usuario']['rol']==='validador' && !$r['validado']): ?>
+     <?php if(isset($_SESSION['rol']) && $_SESSION['rol'] === 'validador'): ?>
             <button class="link validar-btn" data-id="<?= $r['id_incidencia'] ?>">Validar</button>
           <?php endif; ?>
         </div>

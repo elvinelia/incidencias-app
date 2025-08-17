@@ -143,75 +143,6 @@ body::before {
 }
 
 /* =============================================================================
-   COMPONENTE LOADING
-   ============================================================================= */
-
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(30, 64, 175, 0.95);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    opacity: 1;
-    visibility: visible;
-    transition: var(--transition);
-    backdrop-filter: blur(10px);
-}
-
-.loading-overlay.hide {
-    opacity: 0;
-    visibility: hidden;
-}
-
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid rgba(255, 255, 255, 0.3);
-    border-top: 4px solid white;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-.map-loading {
-    position: relative;
-}
-
-.map-loading::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    border-radius: var(--border-radius);
-}
-
-.map-loading::after {
-    content: '';
-    width: 40px;
-    height: 40px;
-    border: 3px solid rgba(37, 99, 235, 0.3);
-    border-top-color: var(--primary-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1001;
-}
-
-/* =============================================================================
    LAYOUT PRINCIPAL
    ============================================================================= */
 
@@ -383,6 +314,7 @@ body::before {
     right: 0;
     height: 4px;
     background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--success-color));
+    background-size: 200% 200%;
     animation: shimmer 3s ease-in-out infinite;
 }
 
@@ -471,6 +403,112 @@ body::before {
     box-shadow: var(--shadow);
     border: 1px solid var(--glass-border);
     overflow: hidden;
+}
+
+/* =============================================================================
+   COMPONENTE LOADING
+   ============================================================================= */
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(30, 64, 175, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 1;
+    visibility: visible;
+    transition: var(--transition);
+    backdrop-filter: blur(10px);
+}
+
+.loading-overlay.hide {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.map-loading {
+    position: relative;
+}
+
+.map-loading::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    border-radius: var(--border-radius);
+}
+
+.map-loading::after {
+    content: '';
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(37, 99, 235, 0.3);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+}
+
+/* =============================================================================
+   COMPONENTE BOTÓN VOLVER
+   ============================================================================= */
+
+.btn-volver {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    box-shadow: var(--shadow);
+    border: none;
+    cursor: pointer;
+}
+
+.btn-volver:hover {
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    color: white;
+}
+
+.btn-volver:active {
+    transform: translateY(0);
+}
+
+.btn-volver i {
+    font-size: 1rem;
 }
 
 /* =============================================================================
@@ -591,24 +629,9 @@ footer::before {
         font-size: 1.2rem;
         margin-bottom: 1rem;
     }
-}
-.btn-volver {
-    display: inline-block;
-    margin-top: 10px;
-    background-color: #2563eb;
-    color: white;
-    padding: 8px 14px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
 
-.btn-volver i {
-    margin-right: 6px;
+    .btn-volver {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+    }
 }
-
-.btn-volver:hover {
-    background-color: #1d4ed8;
-}
-
